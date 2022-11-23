@@ -1,9 +1,9 @@
-#include "stdio.h"
-#include "conio.h"
-#include "string.h"
-#include "stdlib.h"
-#include "iostream"
-#include "windows.h"
+#include <stdio.h> 
+#include <conio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <iostream>
+#include <windows.h>
 
 
 using namespace std;
@@ -35,7 +35,7 @@ Booknode *taonode(book &s)
 	p=new Booknode;
 	if(p==NULL)
 	{
-		cout<<"\n Khong du bo nho";
+		cout<<"\n Thu vien rong :<";
 		return NULL;
 	}
 	p->info=s;
@@ -46,14 +46,14 @@ Booknode *taonode(book &s)
 void chendau(list &l, book s)
 	{
 		Booknode *p = taonode(s);
-		if (l.pHead=NULL)
+		if (l.pHead==NULL)
 		{
 			l.pHead=l.pTail=p;
 		}
 		else
 		{
-			l.pHead->pNext=p;
-			p->pNext=NULL;
+			p->pNext=l.pHead;
+			l.pHead=p;
 		}
 }
 
@@ -70,25 +70,48 @@ int xoadau(list &l)
 		}
 		return 0;
 	}
-
-//Xoa theo ten sach
-void xoatensach(list &l, char key[30])
+// Xoa node phia sau node q 
+int xoanodesauq(list &l,Booknode *q)
+{  
+    if(q!=NULL&& q->pNext!=NULL)
 {
-	Booknode *p, *q = NULL; p=l.pHead;
-	while((p!=NULL)&&strcmp(p->info.tensach,key)==0)
-	{
-		q=p;
-		p=p->pNext;
-	}
-	if(p==NULL)
-		cout<<"Khong co quyen sach co ten la: "<<key;
-	if(q!=NULL)
-		xoatensach(l,key);
-	else
-		xoadau(l);
+   
+    Booknode *p=q->pNext;
+    q->pNext=p->pNext;
+    if(p==l.pTail)
+    l.pTail=q;
+   
+    delete p;
+    return 1;
+   
+}
+    else
+    return 0;
+}
+// Xoa theo ten sach 
+int xoatheotensach(list &l, char key[10])
+{  	
+    Booknode *p,*q=NULL;
+    p=l.pHead;
+    if(p==NULL)
+    return 0;
+    while((p!=NULL)&&(strcmp(p->info.tensach,key)!=0)) 
+ {  
+        q=p;
+        p=p->pNext;   
+}
+    if(strcmp(l.pHead->info.tensach,key)==0){
+        xoadau(l);
+        return 1;
+}
+    if(q!=NULL){
+    xoanodesauq(l,q);
+}
+    else
+    return 1;
 }
 //Tim kiem theo ten tac gia
-void search_tacgia(list l, char ktacgia[30])
+void search_tacgia(list l, char ktacgia[100])
 {
 	Booknode *R;
 	R=l.pHead;
@@ -109,8 +132,7 @@ void search_tacgia(list l, char ktacgia[30])
 			R=R->pNext;
 	}
 }
-
-//Xem nhung cuon dang muon
+// Xem tat ca sach trong thu vien 
 void xuat(list l)
 {
 	int i=1;
@@ -148,7 +170,7 @@ int main()
 	l.pHead=NULL;
 	l.pTail=NULL;
 	book s;
-	int key; char ktacgia[30];
+	char key[30]; char ktacgia[30];
 	int chon, nam;
 	char tg[30];
 		system("color A");
@@ -159,25 +181,26 @@ int main()
 		cout<<"\n\t ---------------------------------";
 		cout<<"\n\t 1. Them 1 quyen sach vao dau danh sach ";
 		cout<<"\n\t 2. Duyet danh sach ";
-		cout<<"\n\t 3. Xoa 1 Phan Tu dau Danh Sach ";
-		cout<<"\n\t 4. Xoa 1 Quyen Sach Theo Ten Tac Sach ";
+		cout<<"\n\t 3. Xoa Quyen sach dau tien trong Danh Sach ";
+		cout<<"\n\t 4. Xoa 1 Quyen Sach Theo Ten Sach";
 		cout<<"\n\t 5. Seach 1 Quyen sach theo ten tac gia ";
 		cout<<"\n\t 0. Thoat ";
-		cout<<"\n\t # Chon (1->6 or 0 de thoat): ";
+		cout<<"\n\t => Moi chon chuc nang tu ^^!: ";
 		cin>>chon;
+		cout<<"\n\t==============================================";
 		switch(chon)
 		{
-		case 1: {
-			cout<<"\n\t Nhap Ma Sach: ";cin>>s.masach; fflush(stdin);
-			cout<<"\n\t Nhap Ten Sach: "; gets(s.tensach);
-			cout<<"\n\t Nhap Ten Tac Gia: "; gets(s.tacgia);
-			cout<<"\n\t Nhap Ten NXB: "; gets(s.nxb);
-			cout<<"\n\t Nhap Nam Xuat Ban: "; cin>>s.namxb;
-			cout<<"\n\t Trang Thai (0-Chua muon : 1-Da Muon): "; cin>>s.trangthai;
-			taonode(s);
-			chendau(l,s); 
-			break;
-				}
+		case 1: 
+			{
+				cout<<"\n\t Nhap Ma Sach: ";cin>>s.masach; fflush(stdin);
+				cout<<"\t Nhap Ten Sach: "; gets(s.tensach);
+				cout<<"\t Nhap Ten Tac Gia: "; gets(s.tacgia);
+				cout<<"\t Nhap Ten NXB: "; gets(s.nxb);
+				cout<<"\t Nhap Nam Xuat Ban: "; cin>>s.namxb;
+				cout<<"\t Trang Thai (0-Chua muon : 1-Da Muon): "; cin>>s.trangthai;
+				chendau(l,s);
+				break;
+			}
 		case 2:
 			{
 				xuat(l);
@@ -188,6 +211,15 @@ int main()
 				xoadau(l);
 				Sleep(500);
 				cout<<"\n\t Delete Complited !!!";
+				break;
+			}
+		case 4:
+			{
+				cout<<"\n\t Nhap ten sach can xoa : "; fflush(stdin) ;
+				gets(key);
+				xoatheotensach(l,key); 
+				Sleep(1000);
+				cout<<"\n\t Delete complited !";
 				break;
 			}
 		case 5:
@@ -205,7 +237,7 @@ int main()
 		}
 		if(chon!=0){
 			cout<<endl; 
-			cout<<"=> enter de tro ve!";
+			cout<<"\n\t=> enter de tro ve!";
 			getch();
 			system("cls");
 		}
